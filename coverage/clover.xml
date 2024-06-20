@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1718815336731" clover="3.2.0">
+  <project timestamp="1718815336731" name="All files">
+    <metrics statements="63" coveredstatements="63" conditionals="20" coveredconditionals="20" methods="18" coveredmethods="18" elements="101" coveredelements="101" complexity="0" loc="63" ncloc="63" packages="3" files="3" classes="3"/>
+    <package name="controllers">
+      <metrics statements="31" coveredstatements="31" conditionals="12" coveredconditionals="12" methods="9" coveredmethods="9"/>
+      <file name="userController.js" path="D:\Poli\8vo\Validacion y verificacion\parcial2\AppPizzeriaRPC JS\controllers\userController.js">
+        <metrics statements="31" coveredstatements="31" conditionals="12" coveredconditionals="12" methods="9" coveredmethods="9"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="5" count="4" type="stmt"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="9" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="14" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="27" count="5" type="stmt"/>
+        <line num="29" count="5" type="stmt"/>
+        <line num="30" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="3" type="stmt"/>
+        <line num="35" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+        <line num="48" count="2" type="stmt"/>
+        <line num="50" count="2" type="stmt"/>
+        <line num="51" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="60" count="3" type="stmt"/>
+        <line num="61" count="2" type="stmt"/>
+        <line num="63" count="2" type="stmt"/>
+        <line num="64" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="72" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="database">
+      <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="database.js" path="D:\Poli\8vo\Validacion y verificacion\parcial2\AppPizzeriaRPC JS\database\database.js">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
+        <line num="14" count="3" type="stmt"/>
+        <line num="24" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="rpc">
+      <metrics statements="26" coveredstatements="26" conditionals="8" coveredconditionals="8" methods="8" coveredmethods="8"/>
+      <file name="router.js" path="D:\Poli\8vo\Validacion y verificacion\parcial2\AppPizzeriaRPC JS\rpc\router.js">
+        <metrics statements="26" coveredstatements="26" conditionals="8" coveredconditionals="8" methods="8" coveredmethods="8"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="11" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="20" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="32" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="41" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="48" count="2" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

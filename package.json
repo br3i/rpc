@@ -1,0 +1,26 @@
+{
+  "name": "apppizzeriarpc-js",
+  "version": "1.0.0",
+  "description": "A pizzeria application with Node.js, Express, and SQLite",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "jest --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "express-json-rpc": "^1.0.3",
+    "json-rpc-server": "^0.0.4",
+    "jsonwebtoken": "^9.0.2",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  }
+}
