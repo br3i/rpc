@@ -1,207 +1,282 @@
-const userController = require('../controllers/userController');
 const db = require('../database/database');
+const { createUser, login, updateUser, deleteUser } = require('../controllers/userController');
 
 jest.mock('../database/database');
 
 describe('User Controller Tests', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-
-  
-  test('Create User - User already exists', (done) => {
-    const mockParams = { username: 'existinguser', password: 'newpass', role: 'user' };
-    const mockCallback = jest.fn();
-
-    // Mock para simular que el usuario ya existe en la base de datos
-    db.get.mockImplementation((query, params, callback) => {
-      callback(null, { username: 'existinguser' });
+    // Limpiar mocks antes de cada prueba
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
-    userController.createUser(mockParams, mockCallback);
+    test('should create a new user', async () => {
+        // Configurar el mock de db.get para simular que el usuario no existe
+        db.get.mockImplementation((query, params, callback) => {
+            callback(null, null); // Simula que el usuario no existe
+        });
 
-    // Verificar que la función de callback se llamó con el mensaje correcto
-    expect(mockCallback).toHaveBeenCalledWith({ code: -32001, message: 'El usuario ya existe' });
+        // Configurar el mock de db.run para simular la inserción del usuario
+        db.run.mockImplementation((query, params, callback) => {
+            callback(null); // Simula que la inserción fue exitosa
+        });
 
-    done();
-  });
+        const params = {
+            username: 'testuser',
+            password: 'testpassword',
+            role: 'user'
+        };
 
-  test('Create User - Database error', (done) => {
-    const mockParams = { username: 'newuser', password: 'newpass', role: 'user' };
-    const mockCallback = jest.fn();
-
-    // Mock para simular un error en la base de datos
-    db.get.mockImplementation((query, params, callback) => {
-      callback(new Error('Database error'));
+        // Usar una promesa para esperar el callback de createUser
+        await new Promise((resolve, reject) => {
+            createUser(params, (err, result) => {
+                try {
+                    expect(err).toBeNull(); // Verifica que no haya error
+                    expect(result.message).toBe('Usuario creado correctamente');
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
     });
 
-    userController.createUser(mockParams, mockCallback);
+    test('should return error when user already exists', async () => {
+        // Configurar el mock de db.get para simular que el usuario ya existe
+        const existingUser = {
+            username: 'testuser',
+            password: 'hashedpassword',
+            role: 'user'
+        };
+        db.get.mockImplementation((query, params, callback) => {
+            callback(null, existingUser); // Simula que el usuario ya existe
+        });
 
-    // Verificar que la función de callback se llamó con el mensaje correcto
-    expect(mockCallback).toHaveBeenCalledWith({ code: -32000, message: 'Error al verificar usuario' });
+        const params = {
+            username: 'testuser',
+            password: 'testpassword',
+            role: 'user'
+        };
 
-    done();
-  });
-
-  test('Create User - Success', (done) => {
-    const mockParams = { username: 'newuser', password: 'newpass', role: 'user' };
-    const mockCallback = jest.fn();
-
-    // Mock para simular que el usuario no existe en la base de datos y se crea correctamente
-    db.get.mockImplementation((query, params, callback) => {
-      callback(null, null); // Usuario no encontrado
-    });
-    db.run.mockImplementation((query, params, callback) => {
-      callback(null); // Operación de inserción exitosa
-    });
-
-    userController.createUser(mockParams, mockCallback);
-
-    // Verificar que la función de callback se llamó con el mensaje correcto
-    expect(mockCallback).toHaveBeenCalledWith(null, { message: 'Usuario creado correctamente' });
-
-    done();
-  });
-
-  test('Login - Incorrect username', (done) => {
-    const mockParams = { username: 'cualquiera', password: 'wrongpass' };
-    const mockCallback = jest.fn();
-
-    // Mock para simular credenciales incorrectas
-    db.get.mockImplementation((query, params, callback) => {
-      callback(null, null);
+        // Usar una promesa para esperar el callback de createUser
+        await new Promise((resolve, reject) => {
+            createUser(params, (err, result) => {
+                try {
+                    expect(err).toEqual({ code: -32001, message: 'El usuario ya existe' });
+                    expect(result).toBeUndefined();
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
     });
 
-    userController.login(mockParams, mockCallback);
+    test('should return error when database error occurs while creating user', async () => {
+        // Configurar el mock de db.get para simular un error al verificar usuario
+        db.get.mockImplementation((query, params, callback) => {
+            callback(new Error('Database error')); // Simula un error al verificar usuario
+        });
 
-    // Verificar que la función de callback se llamó con el mensaje correcto
-    expect(mockCallback).toHaveBeenCalledWith({ code: -32000, message: 'Usuario no encontrado' });
+        const params = {
+            username: 'testuser',
+            password: 'testpassword',
+            role: 'user'
+        };
 
-    done();
-  });
-
-  test('Login - Incorrect Password', (done) => {
-    const mockParams = { username: 'admin', password: 'wrongpass' };
-    const mockCallback = jest.fn();
-
-    // Mock para simular que se encuentra el usuario pero la contraseña es incorrecta
-    db.get.mockImplementation((query, params, callback) => {
-      // Simulamos que encontramos un usuario en la base de datos con el username 'admin'
-      if (params[0] === 'admin') {
-        callback(null, { username: 'admin', password: 'admin' });
-      } else {
-        callback(null, null); // Usuario no encontrado para cualquier otro username
-      }
+        // Usar una promesa para esperar el callback de createUser
+        await new Promise((resolve, reject) => {
+            createUser(params, (err, result) => {
+                try {
+                    expect(err).toEqual({ code: -32000, message: 'Error al verificar usuario' });
+                    expect(result).toBeUndefined();
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
     });
 
-    userController.login(mockParams, mockCallback);
+    test('should successfully login with correct credentials', async () => {
+        const user = {
+            username: 'testuser',
+            password: 'correctpassword'
+        };
+        // Configurar el mock de db.get para simular el usuario encontrado
+        db.get.mockImplementation((query, params, callback) => {
+            callback(null, user); // Simula que el usuario existe en la base de datos
+        });
 
-    // Verificar que la función de callback se llamó con el mensaje correcto
-    expect(mockCallback).toHaveBeenCalledWith({ code: -32001, message: 'Contraseña incorrecta' });
+        const params = {
+            username: 'testuser',
+            password: 'correctpassword'
+        };
 
-    done();
-  });
-  test('Login - Database error', (done) => {
-    const mockParams = { username: 'testuser', password: 'testpass' };
-    const mockCallback = jest.fn();
-
-    // Mock para simular un error en la base de datos
-    db.get.mockImplementation((query, params, callback) => {
-      callback(new Error('Database error'));
+        // Usar una promesa para esperar el callback de login
+        await new Promise((resolve, reject) => {
+            login(params, (err, result) => {
+                try {
+                    expect(err).toBeNull(); // No se espera error
+                    expect(result.message).toBe('Inicio de sesión exitoso');
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
     });
 
-    userController.login(mockParams, mockCallback);
+    test('should return error when user is not found', async () => {
+        // Configurar el mock de db.get para simular que el usuario no existe
+        db.get.mockImplementation((query, params, callback) => {
+            callback(null, null); // Simula que el usuario no existe en la base de datos
+        });
 
-    // Verificar que la función de callback se llamó con el mensaje correcto
-    expect(mockCallback).toHaveBeenCalledWith({ code: -32000, message: 'Usuario no encontrado' });
+        const params = {
+            username: 'nonexistentuser',
+            password: 'anypassword'
+        };
 
-    done();
-  });
-
-  test('Login - Success', (done) => {
-    const mockParams = { username: 'testuser', password: 'testpass' };
-    const mockCallback = jest.fn();
-
-    // Mock para simular que las credenciales son correctas
-    db.get.mockImplementation((query, params, callback) => {
-      callback(null, { username: 'testuser', password: 'testpass' });
+        // Usar una promesa para esperar el callback de login
+        await new Promise((resolve, reject) => {
+            login(params, (err, result) => {
+                try {
+                    expect(err).toEqual({ code: -32000, message: 'Usuario no encontrado' });
+                    expect(result).toBeUndefined();
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
     });
 
-    userController.login(mockParams, mockCallback);
+    test('should return error when password is incorrect', async () => {
+        const user = {
+            username: 'testuser',
+            password: 'correctpassword'
+        };
+        // Configurar el mock de db.get para simular el usuario encontrado
+        db.get.mockImplementation((query, params, callback) => {
+            callback(null, user); // Simula que el usuario existe en la base de datos
+        });
 
-    // Verificar que la función de callback se llamó con el mensaje correcto
-    expect(mockCallback).toHaveBeenCalledWith(null, { message: 'Inicio de sesión exitoso' });
+        const params = {
+            username: 'testuser',
+            password: 'incorrectpassword' // Contraseña incorrecta
+        };
 
-    done();
-  });
-
-  test('Update User - Success', (done) => {
-    const mockParams = { id: 1, username: 'updateduser', password: 'newpass' };
-    const mockCallback = jest.fn();
-
-    // Simulamos que la actualización en la base de datos fue exitosa
-    db.run.mockImplementation((query, params, callback) => {
-      callback(null); // Actualización exitosa
+        // Usar una promesa para esperar el callback de login
+        await new Promise((resolve, reject) => {
+            login(params, (err, result) => {
+                try {
+                    expect(err).toEqual({ code: -32001, message: 'Contraseña incorrecta' });
+                    expect(result).toBeUndefined();
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
     });
 
-    userController.updateUser(mockParams, mockCallback);
+    test('should successfully update user', async () => {
+        const params = {
+            id: 1,
+            username: 'newusername',
+            password: 'newpassword'
+        };
 
-    // Verificar que la función de callback se llamó con el mensaje correcto de éxito
-    expect(mockCallback).toHaveBeenCalledWith(null, { message: 'Usuario actualizado correctamente' });
+        // Configurar el mock de db.run para simular una actualización exitosa
+        db.run.mockImplementation((query, params, callback) => {
+            callback(null); // Simula que la actualización fue exitosa
+        });
 
-    done();
-  });
-
-  test('Update User - Database Error', (done) => {
-    const mockParams = { id: 1, username: 'updateduser', password: 'newpass' };
-    const mockCallback = jest.fn();
-
-    // Simulamos un error en la base de datos durante la actualización
-    db.run.mockImplementation((query, params, callback) => {
-      callback(new Error('Database error'));
+        // Usar una promesa para esperar el callback de updateUser
+        await new Promise((resolve, reject) => {
+            updateUser(params, (err, result) => {
+                try {
+                    expect(err).toBeNull(); // No se espera error
+                    expect(result.message).toBe('Usuario actualizado correctamente');
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
     });
 
-    userController.updateUser(mockParams, mockCallback);
+    test('should return error when update fails', async () => {
+        const params = {
+            id: 1,
+            username: 'newusername',
+            password: 'newpassword'
+        };
 
-    // Verificar que la función de callback se llamó con el mensaje correcto de error de base de datos
-    expect(mockCallback).toHaveBeenCalledWith({ code: -32000, message: 'Error al actualizar usuario' });
+        // Configurar el mock de db.run para simular un error al actualizar
+        db.run.mockImplementation((query, params, callback) => {
+            callback(new Error('Error de base de datos')); // Simula un error al actualizar
+        });
 
-    done();
-  });
-
-  test('Delete User - Success', (done) => {
-    const mockParams = { id: 1 };
-    const mockCallback = jest.fn();
-
-    // Simulamos que la eliminación en la base de datos fue exitosa
-    db.run.mockImplementation((query, params, callback) => {
-      callback(null); // Eliminación exitosa
+        // Usar una promesa para esperar el callback de updateUser
+        await new Promise((resolve, reject) => {
+            updateUser(params, (err, result) => {
+                try {
+                    expect(err).toEqual({ code: -32000, message: 'Error al actualizar usuario' });
+                    expect(result).toBeUndefined();
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
     });
 
-    userController.deleteUser(mockParams, mockCallback);
+    test('should successfully delete user', async () => {
+        const params = {
+            id: 1
+        };
 
-    // Verificar que la función de callback se llamó con el mensaje correcto de éxito
-    expect(mockCallback).toHaveBeenCalledWith(null, { message: 'Usuario eliminado correctamente' });
+        // Configurar el mock de db.run para simular una eliminación exitosa
+        db.run.mockImplementation((query, params, callback) => {
+            callback(null); // Simula que la eliminación fue exitosa
+        });
 
-    done();
-  });
-
-  test('Delete User - Database Error', (done) => {
-    const mockParams = { id: 1 };
-    const mockCallback = jest.fn();
-
-    // Simulamos un error en la base de datos durante la eliminación
-    db.run.mockImplementation((query, params, callback) => {
-      callback(new Error('Database error'));
+        // Usar una promesa para esperar el callback de deleteUser
+        await new Promise((resolve, reject) => {
+            deleteUser(params, (err, result) => {
+                try {
+                    expect(err).toBeNull(); // No se espera error
+                    expect(result.message).toBe('Usuario eliminado correctamente');
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
     });
 
-    userController.deleteUser(mockParams, mockCallback);
+    test('should return error when delete fails', async () => {
+        const params = {
+            id: 1
+        };
 
-    // Verificar que la función de callback se llamó con el mensaje correcto de error de base de datos
-    expect(mockCallback).toHaveBeenCalledWith({ code: -32000, message: 'Error al eliminar usuario' });
+        // Configurar el mock de db.run para simular un error al eliminar
+        db.run.mockImplementation((query, params, callback) => {
+            callback(new Error('Error de base de datos')); // Simula un error al eliminar
+        });
 
-    done();
-  });
-
+        // Usar una promesa para esperar el callback de deleteUser
+        await new Promise((resolve, reject) => {
+            deleteUser(params, (err, result) => {
+                try {
+                    expect(err).toEqual({ code: -32000, message: 'Error al eliminar usuario' });
+                    expect(result).toBeUndefined();
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
+    });
 });

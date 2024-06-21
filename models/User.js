@@ -41,17 +41,17 @@ const getAllData = (callback) => {
 
     db.all('SELECT * FROM users', (err, users) => {
         if (err) {
-            return callback(err);
+            return callback(err); // Devuelve el error al callback
         }
         data.users = users;
 
         db.all('SELECT * FROM ingredients', (err, ingredients) => {
             if (err) {
-                return callback(err);
+                return callback(err); // Devuelve el error al callback
             }
             data.ingredients = ingredients;
 
-            callback(null, data);
+            callback(null, data); // Llama al callback con los datos si todo está bien
         });
     });
 };

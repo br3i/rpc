@@ -15,10 +15,10 @@ db.serialize(() => {
         CREATE TABLE IF NOT EXISTS ingredients (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
-            quantity INTEGER
+            quantity INTEGER,
+            description TEXT
         )
     `);
 });
-
 
 module.exports = db;

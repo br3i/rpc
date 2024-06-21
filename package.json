@@ -4,7 +4,7 @@
   "description": "A pizzeria application with Node.js, Express, and SQLite",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node server.js",
     "test": "jest --coverage"
   },
   "keywords": [],
@@ -15,6 +15,7 @@
     "body-parser": "^1.20.2",
     "express": "^4.19.2",
     "express-json-rpc": "^1.0.3",
+    "json-rpc-2.0": "^1.7.0",
     "json-rpc-server": "^0.0.4",
     "jsonwebtoken": "^9.0.2",
     "sqlite3": "^5.1.7"
