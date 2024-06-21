@@ -35,9 +35,9 @@ describe('JSON-RPC createIngredient Method', () => {
         }
     });
 
-   /*test('should resolve with correct message when ingredient is created', async () => {
+    test('should resolve with correct message when ingredient is created', async () => {
         const ingredientParams = {
-            name: 'Test3',
+            name: 'Test4',
             quantity: 5,
             description: 'Test'
         };
@@ -79,7 +79,7 @@ describe('JSON-RPC createIngredient Method', () => {
         expect(dbIngredient.name).toEqual(ingredientParams.name);
         expect(dbIngredient.quantity).toEqual(ingredientParams.quantity);
         expect(dbIngredient.description).toEqual(ingredientParams.description);
-    });*/
+    });
 
     test('should resolve with correct ingredient when found', async () => {
         // Supongamos que tienes un ingrediente en tu base de datos con ID conocido

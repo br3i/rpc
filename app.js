@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 });
 
 // Ruta para visualizar la base de datos
-/*app.get('/database', (req, res) => {
+app.get('/database', (req, res) => {
     getAllData((err, data) => {
         if (err) {
             console.error('Error al obtener datos de la base de datos:', err);
@@ -32,5 +32,5 @@ app.get('/', (req, res) => {
             res.json(data);
         }
     });
-});*/
+});
 module.exports = app; // Exporta la aplicación express
